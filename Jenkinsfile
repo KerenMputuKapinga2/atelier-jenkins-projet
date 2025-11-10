@@ -74,16 +74,17 @@ pipeline {
         stage('Deployment') {
             steps {
                 sh '''
-                    # ... (arrêt et suppression de l'ancien conteneur)
+                    echo "Arrêt de l'ancien conteneur..."
                     docker stop mini-jenkins-angular || true
+                    
+                    echo "Suppression de l'ancien conteneur..."
                     docker rm mini-jenkins-angular || true
 
-                    # 2. Lancer la nouvelle image sur le port 8081
+                    # COMMANDE CORRIGÉE : Tout sur une seule ligne
                     echo "Démarrage du nouveau conteneur sur le port 8081..."
-                    docker run -d \\
-                        -p 8081:80 \\  <-- CHANGEMENT ICI
-                        --name mini-jenkins-angular \\
-                        kerenmputu2209/mini-jenkins-angular:1.0
+                    docker run -d -p 8081:80 --name mini-jenkins-angular kerenmputu2209/mini-jenkins-angular:1.0
+                    
+                    echo "Déploiement terminé. Application accessible sur le port 8081 de la machine Jenkins."
                 '''
             }
         }
