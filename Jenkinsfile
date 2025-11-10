@@ -29,13 +29,9 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
-            // Utilise le nom du serveur configuré à l'Étape 2
+        stage('SonarQube Analysis') { 
             withSonarQubeEnv('SonarQube Local') { 
-                steps {
-                    // L'atelier demande d'utiliser la commande Maven (mvn sonar:sonar).
-                    // Cela nécessite que Maven soit installé sur la machine Vagrant et configuré dans Jenkins,
-                    // et que vous ayez un pom.xml minimal dans votre projet.
+                steps { // <-- Ce 'steps' est au mauvais niveau, il doit être au-dessus du 'withSonarQubeEnv'
                     sh 'mvn sonar:sonar' 
                 }
             }
