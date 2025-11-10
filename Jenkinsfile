@@ -70,6 +70,32 @@ pipeline {
                 }
             }
         }
+
+        stage('Deployment') {
+            steps {
+                sh '''
+                    # 1. Tenter d'arrêter et de supprimer l'ancien conteneur (si existant)
+                    # '|| true' permet au pipeline de ne pas échouer si le conteneur n'existe pas.
+                    echo "Arrêt de l'ancien conteneur..."
+                    docker stop mini-jenkins-angular || true
+                    
+                    echo "Suppression de l'ancien conteneur..."
+                    docker rm mini-jenkins-angular || true
+
+                    # 2. Lancer la nouvelle image en tant que conteneur
+                    # -d: Détaché (en arrière-plan)
+                    # -p 8080:80: Mapper le port 8080 de l'hôte au port 80 du conteneur (Nginx)
+                    # --name: Nommer le conteneur pour pouvoir le référencer facilement
+                    echo "Démarrage du nouveau conteneur..."
+                    docker run -d \\
+                        -p 8080:80 \\
+                        --name mini-jenkins-angular \\
+                        kerenmputu2209/mini-jenkins-angular:1.0
+                    
+                    echo "Déploiement terminé. Application accessible sur le port 8080 de la machine Jenkins."
+                '''
+            }
+        }
         
     }
 }
