@@ -28,5 +28,17 @@ pipeline {
                 archiveArtifacts artifacts: 'dist/mini-jenkins-angular/**', onlyIfSuccessful: true
             }
         }
+
+        stage('SonarQube Analysis') {
+            // Utilise le nom du serveur configuré à l'Étape 2
+            withSonarQubeEnv('SonarQube Local') { 
+                steps {
+                    // L'atelier demande d'utiliser la commande Maven (mvn sonar:sonar).
+                    // Cela nécessite que Maven soit installé sur la machine Vagrant et configuré dans Jenkins,
+                    // et que vous ayez un pom.xml minimal dans votre projet.
+                    sh 'mvn sonar:sonar' 
+                }
+            }
+        }
     }
 }
