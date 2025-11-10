@@ -56,10 +56,18 @@ pipeline {
         
         stage('Docker Push') {
             steps {
-                // Cette étape nécessite que le compte Docker soit configuré dans Jenkins (identifiants et login).
-                // Si l'atelier le demande, utilisez 'withCredentials' pour le login avant le push.
-                // Sinon, le login doit être fait en amont sur la machine Jenkins (vagrant ssh).
-                sh 'docker push kerenmputu2209/mini-jenkins-angular:1.0'
+                // 🔑 Étape d'authentification Docker Hub
+                withCredentials([usernamePassword(
+                    credentialsId: 'docker-hub-credentials', // ⬅️ L'ID de l'identifiant créé ci-dessus
+                    usernameVariable: 'DOCKER_USERNAME', 
+                    passwordVariable: 'DOCKER_PASSWORD'
+                )]) {
+                    // 1. Se connecter à Docker Hub en utilisant le PAT comme mot de passe
+                    sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}" 
+
+                    // 2. Pousser l'image
+                    sh 'docker push kerenmputu2209/mini-jenkins-angular:1.0'
+                }
             }
         }
         
