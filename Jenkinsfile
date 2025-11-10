@@ -117,7 +117,17 @@ pipeline {
             }
         }
 
-      
+      stage('Dynamic Scan (DAST)') {
+            steps {
+                echo "Démarrage du scan dynamique sur l'application déployée sur http://localhost:8081"
+                
+                // Cette commande est un marqueur de position. 
+                // Pour la valider, vous devez installer et configurer un outil DAST.
+                sh 'echo "Simulating DAST scan on running application..." && sleep 5' 
+                // Si vous avez ZAP CLI installé, vous pouvez utiliser : 
+                // sh 'owasp-zap-cli scan --target http://localhost:8081' 
+            }
+        }
 
         
     }
