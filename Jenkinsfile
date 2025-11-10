@@ -50,6 +50,34 @@ pipeline {
                 sh 'docker build -t kerenmputu2209/mini-jenkins-angular:1.0 . --no-cache'
             }
         }
+
+
+          // NOUVEAU STAGE A : Scan de Secrets (Gitleaks)
+
+
+        stage('Secrets Scan (Gitleaks)') {
+            steps {
+                echo "Recherche de secrets exposés dans le dépôt Git..."
+                // Scanner le répertoire de travail ($PWD)
+                // Le pipeline échoue (exit code 1) si Gitleaks trouve des secrets.
+                sh 'gitleaks detect --source=$PWD --exit-code 1 --config=.gitleaks.toml --redact'
+            }
+        }
+
+
+
+        //NOUVEAU STAGE B : Scan d'Image (Trivy - SCA/Docker Scan)
+
+        stage('Security Scan (Trivy)') {
+            steps {
+                echo "Démarrage de l'analyse de vulnérabilités pour l'image kerenmputu2209/mini-jenkins-angular:1.0"
+                
+                // Définir des règles de blocage [cite: 20]
+                // Le pipeline échoue (exit code 1) si des vulnérabilités CRITICAL ou HIGH sont trouvées[cite: 20].
+                sh 'trivy image --exit-code 1 --severity CRITICAL,HIGH kerenmputu2209/mini-jenkins-angular:1.0'
+            }
+        }
+
         
         // ... stage Docker Push ...
 
