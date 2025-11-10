@@ -33,7 +33,7 @@ pipeline {
             steps {
                 withSonarQubeEnv('SonarQube Local') { 
                     // Ceci récupère le secret 'sonarqube-token' et le met dans la variable SONAR_TOKEN
-                    withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
+                    withCredentials([string(credentialsId: 'sonartoken', variable: 'SONAR_TOKEN')]) {
                         // On passe le jeton au scanner Maven (résout l'erreur Not authorized)
                         sh "mvn sonar:sonar -Dsonar.token=${SONAR_TOKEN}"
                     }
