@@ -46,8 +46,8 @@ pipeline {
         stage('Docker Build') {
             steps {
                 // Construit l'image Docker en utilisant le Dockerfile à la racine
-                // ATTENTION: Remplacez VOTRE_ID_DOCKER par votre nom d'utilisateur Docker Hub
-                sh 'docker build -t VOTRE_ID_DOCKER/mini-jenkins-angular:1.0 . --no-cache'
+                // ATTENTION: VOTRE_ID_DOCKER par votre nom d'utilisateur Docker Hub
+                sh 'docker build -t kerenmputu2209/mini-jenkins-angular:1.0 . --no-cache'
             }
         }
         
@@ -59,7 +59,7 @@ pipeline {
                 // Cette étape nécessite que le compte Docker soit configuré dans Jenkins (identifiants et login).
                 // Si l'atelier le demande, utilisez 'withCredentials' pour le login avant le push.
                 // Sinon, le login doit être fait en amont sur la machine Jenkins (vagrant ssh).
-                sh 'docker push VOTRE_ID_DOCKER/mini-jenkins-angular:1.0'
+                sh 'docker push kerenmputu2209/mini-jenkins-angular:1.0'
             }
         }
         
