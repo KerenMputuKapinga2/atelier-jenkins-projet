@@ -29,9 +29,9 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') { 
-            withSonarQubeEnv('SonarQube Local') { 
-                steps { // <-- Ce 'steps' est au mauvais niveau, il doit être au-dessus du 'withSonarQubeEnv'
+       stage('SonarQube Analysis') {
+            steps { // <--- AJOUTEZ LE BLOC 'steps' ICI
+                withSonarQubeEnv('SonarQube Local') { 
                     sh 'mvn sonar:sonar' 
                 }
             }
