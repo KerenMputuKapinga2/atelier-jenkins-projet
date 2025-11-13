@@ -117,7 +117,7 @@ pipeline {
             }
         }
 
-      stage('Dynamic Scan (DAST)') {
+      stage('Dynamic Scan (DAST 11)') {
             steps {
                 echo "Démarrage du scan dynamique sur l'application déployée sur http://localhost:8081"
                 
