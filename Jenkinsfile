@@ -119,12 +119,24 @@ pipeline {
 
      stage('Dynamic Scan (DAST)') {
     steps {
-        sh 'docker run --rm -v $(pwd):/zap/wrk/:rw owasp/zap2docker-stable zap-baseline.py -t http://192.168.56.10:8081/ -r report-zap.html || true'
-        
-        // La commande '|| true' est utilisée temporairement pour ne pas faire échouer
-        // le pipeline immédiatement si ZAP trouve des alertes (pour ne pas bloquer les étapes suivantes
-        // avant d'avoir vu les résultats), mais vous devriez la retirer en production.
+        // Le bloc withCredentials garantit l'injection des identifiants Docker Hub
+        withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+            sh """
+            echo "Tentative de login Docker pour autoriser le pull de ZAP..."
+            # Login Docker Hub
+            echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin
 
+            echo "Démarrage du scan DAST avec OWASP ZAP (Baseline Scan) sur l'application déployée..."
+            # Exécution du Scan ZAP
+            # Utilisation de l'image 'weekly' car plus récente et plus fiable en CI/CD
+            docker run --rm -v /var/lib/jenkins/workspace/JobPipeline:/zap/wrk/:rw owasp/zap2docker-weekly zap-baseline.py -t http://192.168.56.10:8081/ -r report-zap.html || true
+
+            # Logout Docker Hub (bonne pratique de sécurité)
+            docker logout
+
+            echo "Scan DAST terminé. Rapport archivé."
+            """
+        }
         archiveArtifacts artifacts: 'report-zap.html', fingerprint: true
     }
 }
