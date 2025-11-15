@@ -117,17 +117,17 @@ pipeline {
             }
         }
 
-      stage('Dynamic Scan (DAST 11)') {
-            steps {
-                echo "Démarrage du scan dynamique sur l'application déployée sur http://localhost:8081"
-                
-                // Cette commande est un marqueur de position. 
-                // Pour la valider, vous devez installer et configurer un outil DAST.
-                sh 'echo "Simulating DAST scan on running application..." && sleep 5' 
-                // Si vous avez ZAP CLI installé, vous pouvez utiliser : 
-                // sh 'owasp-zap-cli scan --target http://localhost:8081' 
-            }
-        }
+     stage('Dynamic Scan (DAST)') {
+    steps {
+        sh 'docker run --rm -v $(pwd):/zap/wrk/:rw owasp/zap2docker-stable zap-baseline.py -t http://192.168.56.10:8081/ -r report-zap.html || true'
+        
+        // La commande '|| true' est utilisée temporairement pour ne pas faire échouer
+        // le pipeline immédiatement si ZAP trouve des alertes (pour ne pas bloquer les étapes suivantes
+        // avant d'avoir vu les résultats), mais vous devriez la retirer en production.
+
+        archiveArtifacts artifacts: 'report-zap.html', fingerprint: true
+    }
+}
 
         
     }
